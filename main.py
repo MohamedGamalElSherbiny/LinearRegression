@@ -13,12 +13,13 @@ theta1 = 0
 alpha = 0.001
 cost = []
 for _ in range(1000):
-    hypothesis = [(theta0 + theta1 * i) for i in x]
-    loss_function = (1/2*m) * sum([(hypothesis[i] - y[i])**2 for i in range(m)])
+    hypothesis = np.array([(theta0 + theta1 * i) for i in x])
+    loss_function = (1/2*m) * sum((hypothesis - y)**2)
     cost.append(loss_function)
-    delta_theta0 = (1/m) * sum([(hypothesis[i] - y[i]) for i in range(m)])
-    delta_theta1 = (1/m) * sum([(hypothesis[i] - y[i]) * x[i] for i in range(m)])
-    theta0, theta1 = theta0 - alpha * delta_theta0, theta1 - alpha * delta_theta1
+    delta_theta0 = (1/m) * sum(hypothesis - y)
+    delta_theta1 = (1/m) * sum((hypothesis - y) * x)
+    theta0 = theta0 - alpha * delta_theta0
+    theta1 = theta1 - alpha * delta_theta1
 print(theta0, theta1)
 plt.plot(np.arange(1000), cost)
 plt.show()
