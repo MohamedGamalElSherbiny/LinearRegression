@@ -1,51 +1,28 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
 import pandas as pd
-from sympy import symbols
-# x, y = symbols('x, y')
-df = pd.read_csv("data.csv")
 
-# def linear_regression(inner_y, inner_x, inner_m):
-#     global theta0, theta1
-#     h = [theta1[i] * x + theta0[i] for i in range(m)]
-#     total_sum = 0
-#     gradient_square = 0
-#     for j in range(inner_m):
-#         h[j] = h[j].subs(x, inner_x[j])
-#         total_sum += (h[j] - inner_y[j]) ** 2
-#         gradient_square += (inner_x[j] * ((h[j] - inner_y[j]) ** 2) / inner_m) ** 2
-#     gradient = math.sqrt(gradient_square)
-#     print(gradient)
-#     if gradient == 0:
-#         print(theta0, theta1)
-#         return
-#     else:
-#         for j in range(inner_m):
-#             theta0[j] = theta0[j] - (alpha * 1 / inner_m) * total_sum
-#             theta1[j] = theta1[j] - ((alpha * 1 / inner_m) * total_sum) * inner_x[j]
-#
-# x_input = df["x"].values
-# y_input = df["y"].values
-# theta1 = np.ones(len(x_input))
-# theta0 = np.ones(len(x_input))
-# alpha = 0.001
-# m = len(x_input)
-# for i in range(1000):
-#     linear_regression(inner_y=y_input, inner_x=x_input, inner_m=m)
-
-x = df["x"].values
-y = df["y"].values
+df = pd.read_csv("RegData.csv")
+x = df["x"].values.reshape(-1, 1)
+y = df["y"].values.reshape(-1, 1)
+m = len(x)
 plt.scatter(x, y)
-x = x.reshape(-1, 1)
-y = y.reshape(-1, 1)
-model = LinearRegression()
-model.fit(x, y)
-slope = model.coef_[0]
-intercept = model.intercept_
-plt.plot(x, model.predict(x))
-r2 = r2_score(x, y)
-print(r2)
+plt.show()
+theta0 = 0
+theta1 = 0
+alpha = 0.001
+cost = []
+for _ in range(1000):
+    hypothesis = [(theta0 + theta1 * i) for i in x]
+    loss_function = (1/2*m) * sum([(hypothesis[i] - y[i])**2 for i in range(m)])
+    cost.append(loss_function)
+    delta_theta0 = (1/m) * sum([(hypothesis[i] - y[i]) for i in range(m)])
+    delta_theta1 = (1/m) * sum([(hypothesis[i] - y[i]) * x[i] for i in range(m)])
+    theta0, theta1 = theta0 - alpha * delta_theta0, theta1 - alpha * delta_theta1
+print(theta0, theta1)
+plt.plot(np.arange(1000), cost)
+plt.show()
+new_hypothesis = [theta0 + theta1 * i for i in x]
+plt.plot(x, new_hypothesis, 'r')
+plt.scatter(x, y)
 plt.show()
